@@ -1,1 +1,29 @@
-*/**/__pycache__/
+# Large model files
+*.pt
+models/*.pt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

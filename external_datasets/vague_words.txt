@@ -1,0 +1,76 @@
+some
+many
+few
+several
+various
+certain
+numerous
+stuff
+things
+thing
+something
+anything
+everything
+nothing
+someone
+anyone
+everyone
+somebody
+anybody
+everybody
+nobody
+somewhere
+anywhere
+everywhere
+nowhere
+people
+person
+place
+area
+issue
+matter
+aspect
+factor
+situation
+circumstance
+a lot
+a bit
+a little
+a few
+a couple
+a number of
+a bunch of
+lots of
+plenty of
+kind of
+sort of
+type of
+all kinds of
+all sorts of
+somehow
+someway
+whatever
+whichever
+whenever
+wherever
+whoever
+however
+etc
+et cetera
+and so on
+and so forth
+and stuff like that
+and things like that
+or something like that
+good
+bad
+nice
+great
+fine
+okay
+ok
+big
+small
+important
+interesting
+different
