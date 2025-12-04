@@ -1,6 +1,7 @@
 # Large model files
 *.pt
 models/*.pt
+models/*
 
 # Python
 __pycache__/
