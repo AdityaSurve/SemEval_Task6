@@ -1,8 +1,8 @@
 import torch
 
 class Config:
-    # Model - Using smaller model for T4 GPU
-    MODEL_NAME = "distilroberta-base"  # Smaller, faster, less memory
+    
+    MODEL_NAME = "distilroberta-base"  
     
     # Tokenization
     MAX_LEN = 256  
@@ -30,3 +30,4 @@ class Config:
     
     # Early stopping
     PATIENCE = 2  
+
