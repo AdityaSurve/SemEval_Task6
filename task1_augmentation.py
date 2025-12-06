@@ -9,7 +9,7 @@ nltk.download('wordnet', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
 
 THREE_CLASSES = ["Clear Reply", "Ambivalent", "Clear Non-Reply"]
-TARGET_PER_CLASS = 1500
+TARGET_PER_CLASS = 1500  # Match closer to Ambivalent's 2040
 
 
 def get_synonyms(word):
@@ -91,11 +91,9 @@ def main():
     print("="*60)
     
     print("\nLoading raw dataset...")
-    import pyarrow as pa
     
-    raw_path = "dataset/train/train/data-00000-of-00001.arrow"
-    with pa.memory_map(raw_path, 'r') as source:
-        df = pa.ipc.open_file(source).read_all().to_pandas()
+    raw_path = "dataset/data/train-00000-of-00001.parquet"
+    df = pd.read_parquet(raw_path)
     
     print(f"\nAll columns: {df.columns.tolist()}")
     print(f"\nTotal rows: {len(df)}")
