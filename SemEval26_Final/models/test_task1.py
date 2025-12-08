@@ -1,8 +1,3 @@
-"""
-Test script for Task 1: Clarity Classification
-Evaluates the trained model on a test dataset
-"""
-
 import os
 import sys
 import numpy as np
@@ -23,27 +18,17 @@ ARTIFACTS_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "artif
 
 
 def test(test_file=None):
-    """
-    Test the trained Task 1 model on a test dataset.
-    
-    Args:
-        test_file: Path to test parquet file. If None, uses dataset/task1_test.parquet
-    """
     logger.log("TASK 1: CLARITY CLASSIFICATION - TESTING", "announce")
-    
-    # Load model artifacts
     model_path = os.path.join(ARTIFACTS_PATH, "task1_model.joblib")
     if not os.path.exists(model_path):
         logger.log(f"Model not found at {model_path}", "error")
         logger.log("Please run train() first", "warning")
         return
-    
     artifacts = joblib.load(model_path)
     logger.log("Model loaded successfully", "success")
-    
-    # Load test data
+
     if test_file is None:
-        test_file = os.path.join(DATASET_PATH, "task1_test.parquet")
+        test_file = os.path.join(DATASET_PATH, "raw_train.parquet")
     
     if not os.path.exists(test_file):
         logger.log(f"Test file not found at {test_file}", "error")
@@ -52,8 +37,6 @@ def test(test_file=None):
     
     df = pd.read_parquet(test_file)
     logger.log(f"Loaded {len(df)} test samples", "success")
-    
-    # Handle different column names
     if "clarity_label" in df.columns:
         df["label"] = df["clarity_label"]
     elif "task1_label" in df.columns:
@@ -61,16 +44,14 @@ def test(test_file=None):
     
     if "question" not in df.columns and "interview_question" in df.columns:
         df["question"] = df["interview_question"]
-    
-    # Check if we have labels (for evaluation) or just predictions
+
     has_labels = "label" in df.columns and df["label"].notna().all()
     
     if has_labels:
         df = df[df["label"].isin(THREE_CLASSES)].reset_index(drop=True)
         logger.log("Class distribution:", "plain")
         print(df["label"].value_counts())
-    
-    # Extract features
+
     extractor = ClarityFeatureExtractor()
     
     logger.log("Extracting features...", "plain")
@@ -89,35 +70,28 @@ def test(test_file=None):
     Combined_emb = np.array(combined_embs)
     Diff_emb = np.array(diff_embs)
     ling_df = pd.DataFrame(ling_features_list)
-    
-    # Apply PCA
+
     X_emb_qa_pca = artifacts["pca_qa"].transform(Combined_emb)
     X_diff_pca = artifacts["pca_diff"].transform(Diff_emb)
-    
-    # Combine features
+
     X_combined = np.hstack([X_emb_qa_pca, X_diff_pca, ling_df.values])
     X_scaled = artifacts["scaler"].transform(X_combined)
     
     logger.log("RUNNING PREDICTIONS", "announce")
-    
-    # Get predictions from different models
+
     results = {}
-    
-    # Vote classifier
+
     y_pred_vote = artifacts["vote_clf"].predict(X_scaled)
     results["Voting Ensemble"] = y_pred_vote
-    
-    # Stack classifier
+
     y_pred_stack = artifacts["stack_clf"].predict(X_scaled)
     results["Stacking"] = y_pred_stack
-    
-    # Individual models
+
     for name, model in artifacts["trained_models"].items():
         y_pred = model.predict(X_scaled)
         results[name] = y_pred
     
     if has_labels:
-        # Evaluate all models
         y_true = artifacts["label_encoder"].transform(df["label"])
         
         logger.log("EVALUATION RESULTS", "announce")
@@ -135,23 +109,19 @@ def test(test_file=None):
                 best_model = name
         
         logger.log(f"BEST: {best_model} (F1={best_f1:.4f})", "success")
-        
-        # Detailed report for best model
+
         best_pred = results[best_model]
         print("\nClassification Report:")
         print(classification_report(y_true, best_pred, target_names=artifacts["label_encoder"].classes_))
         print("\nConfusion Matrix:")
         print(confusion_matrix(y_true, best_pred))
-        
-        # Return predictions with labels
+
         df["predicted"] = artifacts["label_encoder"].inverse_transform(best_pred)
         
     else:
-        # No labels - just return predictions
         logger.log("No labels found - returning predictions only", "warning")
         df["predicted"] = artifacts["label_encoder"].inverse_transform(results["Voting Ensemble"])
-    
-    # Save predictions
+
     output_path = os.path.join(DATASET_PATH, "task1_predictions.csv")
     df.to_csv(output_path, index=False)
     logger.log(f"Predictions saved to {output_path}", "success")
@@ -160,10 +130,6 @@ def test(test_file=None):
 
 
 def predict_single(question: str, answer: str) -> dict:
-    """
-    Predict clarity label for a single Q&A pair.
-    Returns dict with label and confidence scores.
-    """
     model_path = os.path.join(ARTIFACTS_PATH, "task1_model.joblib")
     if not os.path.exists(model_path):
         raise FileNotFoundError("Model not found. Please run train() first.")
@@ -181,8 +147,7 @@ def predict_single(question: str, answer: str) -> dict:
     X_diff_pca = artifacts["pca_diff"].transform(diff_emb)
     X_combined = np.hstack([X_emb_qa_pca, X_diff_pca, ling])
     X_scaled = artifacts["scaler"].transform(X_combined)
-    
-    # Get prediction and probabilities
+
     y_pred = artifacts["vote_clf"].predict(X_scaled)
     y_proba = artifacts["vote_clf"].predict_proba(X_scaled)[0]
     
