@@ -1,3 +1,4 @@
+from flask_cors import CORS
 import os
 import sys
 
@@ -12,6 +13,7 @@ from flask import Flask, request, jsonify
 logger = Logger()
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
