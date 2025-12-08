@@ -28,3 +28,7 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+SemEval26_Final/dataset/
+SemEval26_Final/artifacts/
+SemEval26_Final/catboost_info/

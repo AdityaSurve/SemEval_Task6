@@ -26,8 +26,8 @@ THREE_CLASSES = ["Clear Reply", "Ambivalent", "Clear Non-Reply"]
 
 class EmbeddingFeatureExtractor:
     def __init__(self):
-        print("Loading Sentence Transformer (mpnet-base - higher quality)...")
-        self.sbert = SentenceTransformer("all-mpnet-base-v2")  # Better model, 768d
+        print("Loading Sentence Transformer...")
+        self.sbert = SentenceTransformer("all-MiniLM-L6-v2")
         
     def extract(self, question, answer):
         q = str(question) if question else ""
@@ -204,9 +204,9 @@ def main():
     print(f"  F1: {f1:.4f} | Acc: {acc:.4f}")
     results["Linguistic only"] = {"f1": f1, "acc": acc}
     
-    print("\n--- Option 2: Q+A embeddings (1536d) + PCA ---")
+    print("\n--- Option 2: Q+A embeddings (768d) + PCA ---")
     X_emb_qa = Combined_emb
-    pca_qa = PCA(n_components=150)  # More components for larger embeddings
+    pca_qa = PCA(n_components=100)
     X_emb_qa_pca = pca_qa.fit_transform(X_emb_qa)
     scaler_qa = StandardScaler()
     X_train_qa = scaler_qa.fit_transform(X_emb_qa_pca[X_train_idx])
@@ -220,8 +220,8 @@ def main():
     print(f"  F1: {f1:.4f} | Acc: {acc:.4f}")
     results["Q+A embeddings"] = {"f1": f1, "acc": acc}
     
-    print("\n--- Option 3: Diff embeddings (768d) + PCA ---")
-    pca_diff = PCA(n_components=100)  # More components for larger embeddings
+    print("\n--- Option 3: Diff embeddings (384d) + PCA ---")
+    pca_diff = PCA(n_components=50)
     X_diff_pca = pca_diff.fit_transform(Diff_emb)
     scaler_diff = StandardScaler()
     X_train_diff = scaler_diff.fit_transform(X_diff_pca[X_train_idx])

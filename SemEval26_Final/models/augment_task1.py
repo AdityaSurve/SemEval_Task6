@@ -1,18 +1,28 @@
+"""
+Data Augmentation for Task 1: Clarity Classification
+Augments minority classes to balance the dataset
+"""
+
+import os
+import sys
 import pandas as pd
 import numpy as np
 import random
 import nltk
 from nltk.corpus import wordnet
-import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.logger import Logger
 
 nltk.download('wordnet', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
 
-NINE_CLASSES = [
-    "Explicit", "Dodging", "Implicit", "General", "Deflection",
-    "Declining to answer", "Claims ignorance", "Clarification", "Partial/half-answer"
-]
+logger = Logger()
+
+THREE_CLASSES = ["Clear Reply", "Ambivalent", "Clear Non-Reply"]
 TARGET_PER_CLASS = 1500
+
+DATASET_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dataset")
 
 
 def get_synonyms(word):
@@ -88,31 +98,56 @@ def augment_text(text, technique):
     return text
 
 
-def main():
-    print("Loading dataset...")
-    df = pd.read_parquet("dataset/train_with_features.parquet")
+def augment():
+    logger.log("TASK 1: CLARITY - DATA AUGMENTATION", "announce")
     
-    df = df[df["label"].isin(NINE_CLASSES)].reset_index(drop=True)
+    raw_path = os.path.join(DATASET_PATH, "raw_train.parquet")
+    if not os.path.exists(raw_path):
+        logger.log(f"Raw data not found at {raw_path}", "error")
+        logger.log("Please place raw_train.parquet in the dataset folder", "warning")
+        logger.log("This should contain clarity_label column", "warning")
+        return
     
-    print(f"\nLoaded {len(df)} samples")
-    print(f"\nOriginal class distribution:")
-    print(df["label"].value_counts())
+    df = pd.read_parquet(raw_path)
+    
+    logger.log(f"Loaded {len(df)} samples", "success")
+    
+    if "clarity_label" in df.columns:
+        label_col = "clarity_label"
+    else:
+        logger.log("No clarity_label column found!", "error")
+        return
+    
+    df["task1_label"] = df[label_col].map({
+        "Clear Reply": "Clear Reply",
+        "Ambivalent": "Ambivalent", 
+        "Ambiguous": "Ambivalent",
+        "Clear Non-Reply": "Clear Non-Reply"
+    })
+    
+    df = df.dropna(subset=["task1_label"]).reset_index(drop=True)
+    
+    if "question" not in df.columns and "interview_question" in df.columns:
+        df["question"] = df["interview_question"]
+    
+    logger.log("Original class distribution:", "plain")
+    print(df["task1_label"].value_counts())
     
     techniques = ['synonym', 'deletion', 'swap', 'insertion']
     augmented_rows = []
     
-    for label in NINE_CLASSES:
-        subset = df[df["label"] == label]
+    for label in THREE_CLASSES:
+        subset = df[df["task1_label"] == label]
         current_count = len(subset)
         needed = TARGET_PER_CLASS - current_count
         
-        print(f"\n{label}: {current_count} samples", end="")
+        logger.log(f"{label}: {current_count} samples", "plain")
         
         if needed <= 0:
-            print(f" - No augmentation needed (already >= {TARGET_PER_CLASS})")
+            logger.log(f"  No augmentation needed", "success")
             continue
         
-        print(f", need {needed} more")
+        logger.log(f"  Need {needed} more", "warning")
         
         aug_count = 0
         attempts = 0
@@ -135,9 +170,9 @@ def main():
                 aug_count += 1
                 
                 if aug_count % 100 == 0:
-                    print(f"  Generated {aug_count}/{needed}")
+                    print(f"    Generated {aug_count}/{needed}")
         
-        print(f"  Final: {aug_count} augmented samples")
+        logger.log(f"  Generated {aug_count} samples", "success")
     
     df["is_augmented"] = False
     df["aug_technique"] = "original"
@@ -148,26 +183,22 @@ def main():
     else:
         final_df = df
     
-    print(f"\n" + "="*60)
-    print("FINAL DATASET")
-    print("="*60)
-    print(f"Total samples: {len(final_df)}")
-    print(f"\nClass distribution:")
-    print(final_df["label"].value_counts().sort_index())
+    logger.log("FINAL DATASET", "announce")
+    logger.log(f"Total samples: {len(final_df)}", "success")
+    print(final_df["task1_label"].value_counts().sort_index())
     
-    os.makedirs("augmented_data", exist_ok=True)
-    
-    final_df.to_parquet("augmented_data/train_augmented_9class.parquet", index=False)
-    final_df.to_csv("augmented_data/train_augmented_9class.csv", index=False)
-    
-    print(f"\nSaved to:")
-    print(f"  - augmented_data/train_augmented_9class.parquet")
-    print(f"  - augmented_data/train_augmented_9class.csv")
+    output_path = os.path.join(DATASET_PATH, "task1_train.parquet")
+    output_csv_path = os.path.join(DATASET_PATH, "task1_train.csv")
+    final_df.to_parquet(output_path, index=False)
+    final_df.to_csv(output_csv_path, index=False)
+    logger.log(f"Saved to {output_path}", "success")
+    logger.log(f"Saved to {output_csv_path}", "success")
     
     print(f"\nAugmentation stats:")
     print(final_df["aug_technique"].value_counts())
 
 
 if __name__ == "__main__":
-    main()
+    augment()
+
 
