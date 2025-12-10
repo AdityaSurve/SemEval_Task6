@@ -1,0 +1,90 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "csv",
+  "dataset_size": 14748110,
+  "description": "",
+  "download_checksums": {
+    "/data/data1/users/geofila/QAEvaluation/thesis/preprocessed_data/full_train_set.csv": {
+      "num_bytes": 14729045,
+      "checksum": null
+    }
+  },
+  "download_size": 14729045,
+  "features": {
+    "title": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "date": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "president": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "url": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "interview_question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "interview_answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "gpt3.5_summary": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "gpt3.5_prediction": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "label": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "annotator_id": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "inaudible": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "multiple_questions": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "affirmative_questions": {
+      "dtype": "bool",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 29477155,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 14748110,
+      "num_examples": 3448,
+      "dataset_name": "csv"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

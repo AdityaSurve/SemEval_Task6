@@ -1,0 +1,82 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "csv",
+  "dataset_size": 756608,
+  "description": "",
+  "download_checksums": {
+    "/data/data1/users/geofila/QAEvaluation/thesis/preprocessed_data/final/full_test_set.csv": {
+      "num_bytes": 754646,
+      "checksum": null
+    }
+  },
+  "download_size": 754646,
+  "features": {
+    "Unnamed: 0": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "interview_question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "interview_answer": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "Annotator1": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "Annotator2": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "Annotator3": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "Label": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "url": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "inaudible": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "multiple_questions": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "affirmative_questions": {
+      "dtype": "bool",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 1511254,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 756608,
+      "num_examples": 308,
+      "dataset_name": "csv"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
